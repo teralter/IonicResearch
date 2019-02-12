@@ -8,7 +8,9 @@
 </ion-header>
 
 <ion-content padding>
-  <ion-button expand="block" [routerLink]="['/menu/home/tabs/forms', formId]" routerDirection="forward">
-    Подробно
-  </ion-button>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button>
+      <ion-icon name="add" [routerLink]="['/menu/home/tabs/forms', 0]"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

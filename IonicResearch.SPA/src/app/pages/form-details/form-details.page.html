@@ -3,10 +3,68 @@
     <ion-buttons slot="start">
       <ion-back-button [defaultHref]="['../']"></ion-back-button>
     </ion-buttons>
-    <ion-title>Анкета № {{formId}}</ion-title>
+    <ion-title>{{title}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content padding>
+  <ion-segment [(ngModel)]="segement">
+    <ion-segment-button value="form">
+      Анкета
+    </ion-segment-button>
+    <ion-segment-button value="photos">
+      Фото
+    </ion-segment-button>
+    <ion-segment-button value="products">
+      Продукция
+    </ion-segment-button>
+  </ion-segment>
 
+  <div [ngSwitch]="segement" padding-top>
+    <form [formGroup]="outletForm" (ngSubmit)="onSubmit()">
+      <ion-list *ngSwitchCase="'form'">
+        <ion-item>
+          <ion-label>Дата</ion-label>
+          <ion-datetime display-format="DD.MM.YYYY" picker-format="DD MMMM YYYY" [monthNames]="monthNames"
+            done-text="Готово" cancel-text="Отмена" formControlName="repDate"></ion-datetime>
+        </ion-item>
+        <ion-item>
+          <ion-label>Название</ion-label>
+          <ion-input type="text" formControlName="name" text-right></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label>ИНН</ion-label>
+          <ion-input type="text" formControlName="inn" text-right></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label>Адрес</ion-label>
+          <ion-textarea rows="1" formControlName="address" text-right></ion-textarea>
+        </ion-item>
+        <ion-item>
+          <ion-label>Тип</ion-label>
+          <ion-select done-text="Готово" cancel-text="Отмена" formControlName="typeId">
+            <ion-select-option *ngFor="let ot of ouletTypes" [value]="ot.id">
+              {{ot.name}}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-label>Открытие</ion-label>
+          <ion-datetime display-format="HH:mm" picker-format="HH mm" minuteValues="0,05,10,15,20,25,30,35,40,45,50,55"
+            done-text="Готово" cancel-text="Отмена" formControlName="openingTime"></ion-datetime>
+        </ion-item>
+        <ion-item (click)="onGetCoords()">
+          <ion-label>Координаты</ion-label>
+          <ion-input *ngIf="outletForm.get('coords').value" text-right readonly value="{{(outletForm.get('coords').value[0]) | number : '1.6'}};{{(outletForm.get('coords').value[1]) | number : '1.6'}}"></ion-input>
+          <ion-icon name="locate" item-right *ngIf="!outletForm.get('coords').value"></ion-icon>
+        </ion-item>
+      </ion-list>
+      <ion-list *ngSwitchCase="'photos'">
+        Фото
+      </ion-list>
+      <ion-list *ngSwitchCase="'products'">
+        Продукция
+      </ion-list>
+    </form>
+  </div>
 </ion-content>

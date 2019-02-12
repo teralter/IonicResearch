@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -9,11 +10,11 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
-
   credentialsForm: FormGroup;
 
   constructor(
     private authService: AuthService,
+    private router: Router,
     private toastCtrl: ToastController,
     private formBuilder: FormBuilder
   ) { }
@@ -28,6 +29,7 @@ export class LoginPage implements OnInit {
   onSubmit() {
     this.authService.login(this.credentialsForm.value).subscribe(next => {
       this.credentialsForm.reset();
+      this.router.navigate(['menu', 'home']);
     }, error => {
       if (error === 'Unauthorized') {
         this.showToast('Неверный логин пользователя или пароль');

@@ -28,8 +28,11 @@ export class AppComponent {
       this.splashScreen.hide();
 
       this.authService.authState.subscribe(state => {
-        if (state != null) {
-          this.router.navigate(state ? ['menu', 'home'] : ['login']);
+        // if (state != null) {
+        //   this.router.navigate(state ? ['menu', 'home'] : ['login']);
+        // }
+        if (state === false) {
+          this.router.navigate(['login']);
         }
       });
     });

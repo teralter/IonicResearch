@@ -18,8 +18,8 @@ const routes: Routes = [
   imports: [
     CommonModule,
     FormsModule,
-    IonicModule,
     ReactiveFormsModule,
+    IonicModule,
     RouterModule.forChild(routes)
   ],
   declarations: [LoginPage]
