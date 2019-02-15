@@ -10,10 +10,16 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { SQLite } from '@ionic-native/sqlite/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { Camera } from '@ionic-native/Camera/ngx';
+import { File } from '@ionic-native/File/ngx';
+import { WebView } from '@ionic-native/ionic-webview/ngx';
+import { FilePath } from '@ionic-native/file-path/ngx';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ErrorInterceptorProvider } from './services/error.interceptor';
+
+import { DatabaseProvider } from './providers/database/database';
 
 export function jwtOptionsFactory(storage) {
   return {
@@ -47,7 +53,12 @@ export function jwtOptionsFactory(storage) {
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ErrorInterceptorProvider,
     SQLite,
-    Geolocation
+    Geolocation,
+    Camera,
+    File,
+    WebView,
+    FilePath,
+    DatabaseProvider
   ],
   bootstrap: [AppComponent]
 })

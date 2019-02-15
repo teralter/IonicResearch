@@ -32,9 +32,9 @@ export class AuthService {
   }
 
   checkToken() {
-    this.storage.get(TOKEN_KEY).then(res => {
-      if (res) {
-        const isExpired = this.jwtHelper.isTokenExpired(res);
+    this.storage.get(TOKEN_KEY).then(token => {
+      if (token) {
+        const isExpired = this.jwtHelper.isTokenExpired(token);
         this.authState.next(!isExpired);
       } else {
         this.authState.next(false);
@@ -43,9 +43,9 @@ export class AuthService {
   }
 
   initUser() {
-    this.storage.get(USER_KEY).then(res => {
-      if (res) {
-        this.user = res;
+    this.storage.get(USER_KEY).then(user => {
+      if (user) {
+        this.user = user;
       }
     });
   }
@@ -70,6 +70,6 @@ export class AuthService {
   }
 
   isAuthenticated() {
-    return this.authState.value;
+    return this.authState.value !== false;
   }
 }

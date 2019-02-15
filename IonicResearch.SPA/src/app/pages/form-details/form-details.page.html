@@ -55,12 +55,26 @@
         </ion-item>
         <ion-item (click)="onGetCoords()">
           <ion-label>Координаты</ion-label>
-          <ion-input *ngIf="outletForm.get('coords').value" text-right readonly value="{{(outletForm.get('coords').value[0]) | number : '1.6'}};{{(outletForm.get('coords').value[1]) | number : '1.6'}}"></ion-input>
-          <ion-icon name="locate" item-right *ngIf="!outletForm.get('coords').value"></ion-icon>
+          <ion-icon name="locate" slot="end" [hidden]="!!coords"></ion-icon>
+          <ion-input [hidden]="!coords" text-right readonly value="{{coords}}">
+          </ion-input>
         </ion-item>
       </ion-list>
       <ion-list *ngSwitchCase="'photos'">
-        Фото
+        <ion-item *ngFor="let photo of photos; index as pos" text-wrap>
+            <ion-thumbnail slot="start">
+              <ion-img [src]="photo.path"></ion-img>
+            </ion-thumbnail>
+            <ion-label>
+              {{ photo.name }}
+            </ion-label>
+            <!-- <ion-button slot="end" fill="clear" (click)="startUpload(img)">
+              <ion-icon slot="icon-only" name="cloud-upload"></ion-icon>
+            </ion-button>
+            <ion-button slot="end" fill="clear" (click)="deleteImage(img, pos)">
+              <ion-icon slot="icon-only" name="trash"></ion-icon>
+            </ion-button> -->
+        </ion-item>
       </ion-list>
       <ion-list *ngSwitchCase="'products'">
         Продукция
@@ -68,3 +82,11 @@
     </form>
   </div>
 </ion-content>
+<ion-footer>
+  <ion-toolbar *ngIf="segement === 'photos'" color="primary">
+    <ion-button fill="clear" expand="full" color="light" (click)="takePicture()">
+      <ion-icon slot="start" name="camera"></ion-icon>
+      Выберите фото
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>

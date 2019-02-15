@@ -1,5 +1,5 @@
-import { OutletProduct } from './outlet-product';
 import { OutletPhoto } from './outlet-photo';
+import { OutletProduct } from './outlet-product';
 
 export class OutletForm {
   id: number;
@@ -11,8 +11,8 @@ export class OutletForm {
   latitude: number;
   longitude: number;
   typeId: number;
-  products: OutletProduct[];
   photos: OutletPhoto[];
+  products: OutletProduct[];
 
   constructor() {
     this.id = 0;

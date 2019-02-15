@@ -16,13 +16,15 @@
             </ion-label>
           </ion-item>
         </ion-menu-toggle>
-        <ion-item tappable (click)="logout()">
-          <ion-icon name="log-out" slot="start"></ion-icon>
-          Выход
-        </ion-item>
+        <ion-menu-toggle>
+          <ion-item (click)="logout()">
+            <ion-icon name="log-out" slot="start"></ion-icon>
+            Выход
+          </ion-item>
+        </ion-menu-toggle>
       </ion-list>
     </ion-content>
-    
+
   </ion-menu>
 
   <ion-router-outlet id="content" main></ion-router-outlet>
