@@ -21,8 +21,8 @@
   </ion-segment>
 
   <div [ngSwitch]="segement" padding-top>
-    <form [formGroup]="outletForm" (ngSubmit)="onSubmit()">
-      <ion-list *ngSwitchCase="'form'">
+    <form [formGroup]="form" *ngSwitchCase="'form'">
+      <ion-list>
         <ion-item>
           <ion-label>Дата</ion-label>
           <ion-datetime display-format="DD.MM.YYYY" picker-format="DD MMMM YYYY" [monthNames]="monthNames"
@@ -34,7 +34,7 @@
         </ion-item>
         <ion-item>
           <ion-label>ИНН</ion-label>
-          <ion-input type="text" formControlName="inn" text-right></ion-input>
+          <ion-input type="number" formControlName="inn" text-right></ion-input>
         </ion-item>
         <ion-item>
           <ion-label>Адрес</ion-label>
@@ -42,8 +42,8 @@
         </ion-item>
         <ion-item>
           <ion-label>Тип</ion-label>
-          <ion-select done-text="Готово" cancel-text="Отмена" formControlName="typeId">
-            <ion-select-option *ngFor="let ot of ouletTypes" [value]="ot.id">
+          <ion-select done-text="Готово" cancel-text="Отмена" formControlName="type">
+            <ion-select-option *ngFor="let ot of ouletTypes" [value]="ot">
               {{ot.name}}
             </ion-select-option>
           </ion-select>
@@ -60,29 +60,38 @@
           </ion-input>
         </ion-item>
       </ion-list>
-      <ion-list *ngSwitchCase="'photos'">
-        <ion-item *ngFor="let photo of photos; index as pos" text-wrap>
-            <ion-thumbnail slot="start">
-              <ion-img [src]="photo.path"></ion-img>
-            </ion-thumbnail>
-            <ion-label>
-              {{ photo.name }}
-            </ion-label>
-            <!-- <ion-button slot="end" fill="clear" (click)="startUpload(img)">
+      <!-- <ion-button expand="block" type="submit">Войти</ion-button> -->
+    </form>
+
+    <ion-list *ngSwitchCase="'photos'">
+      <ion-item *ngFor="let photo of photos; index as pos" text-wrap>
+        <ion-thumbnail slot="start">
+          <ion-img [src]="photo.path"></ion-img>
+        </ion-thumbnail>
+        <ion-label>
+          {{ photo.name }}
+        </ion-label>
+        <!-- <ion-button slot="end" fill="clear" (click)="startUpload(img)">
               <ion-icon slot="icon-only" name="cloud-upload"></ion-icon>
             </ion-button>
             <ion-button slot="end" fill="clear" (click)="deleteImage(img, pos)">
               <ion-icon slot="icon-only" name="trash"></ion-icon>
             </ion-button> -->
-        </ion-item>
-      </ion-list>
-      <ion-list *ngSwitchCase="'products'">
-        Продукция
-      </ion-list>
-    </form>
+      </ion-item>
+    </ion-list>
+    <ion-list *ngSwitchCase="'products'">
+      Продукция
+    </ion-list>
+
   </div>
 </ion-content>
 <ion-footer>
+  <ion-toolbar *ngIf="segement === 'form'" color="primary">
+    <ion-button fill="clear" expand="full" color="light" (click)="onSubmitForm()">
+      <ion-icon slot="start" name="save"></ion-icon>
+      Сохранить
+    </ion-button>
+  </ion-toolbar>
   <ion-toolbar *ngIf="segement === 'photos'" color="primary">
     <ion-button fill="clear" expand="full" color="light" (click)="takePicture()">
       <ion-icon slot="start" name="camera"></ion-icon>

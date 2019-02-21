@@ -5,6 +5,7 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AuthService } from './services/auth.service';
 import { Router } from '@angular/router';
+import { DbService } from './services/db.service';
 
 
 @Component({
@@ -17,15 +18,18 @@ export class AppComponent {
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private dbService: DbService
   ) {
     this.initializeApp();
   }
 
   initializeApp() {
     this.platform.ready().then(() => {
-      this.statusBar.styleDefault();
-      this.splashScreen.hide();
+      this.dbService.init().then(state => {
+        this.statusBar.styleDefault();
+        this.splashScreen.hide();
+      });
 
       this.authService.authState.subscribe(state => {
         // if (state != null) {

@@ -7,7 +7,19 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content>
+  <ion-list>
+    <ion-item [routerLink]="['/menu/home/tabs/forms', form.id]" *ngFor="let form of forms">
+      <ion-thumbnail slot="start">
+        <img src="assets/img/outlet.png">
+      </ion-thumbnail>
+      <ion-label>
+        <h3>{{form.name}}</h3>
+        <p>{{form.address}}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button>
       <ion-icon name="add" [routerLink]="['/menu/home/tabs/forms', 0]"></ion-icon>

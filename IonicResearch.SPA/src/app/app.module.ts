@@ -19,8 +19,6 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ErrorInterceptorProvider } from './services/error.interceptor';
 
-import { DatabaseProvider } from './providers/database/database';
-
 export function jwtOptionsFactory(storage) {
   return {
     tokenGetter: () => {
@@ -57,8 +55,7 @@ export function jwtOptionsFactory(storage) {
     Camera,
     File,
     WebView,
-    FilePath,
-    DatabaseProvider
+    FilePath
   ],
   bootstrap: [AppComponent]
 })

@@ -6,7 +6,8 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { HomePage } from './home.page';
-import { OutletResolverService } from 'src/app/resolvers/outlet-resolver.service';
+import { OutletFormResolverService } from 'src/app/resolvers/outlet-form-resolver.service';
+import { OutletTypesResolverService } from 'src/app/resolvers/outlet-types-resolver.service';
 
 const routes: Routes = [
   {
@@ -20,7 +21,8 @@ const routes: Routes = [
       {
         path: 'forms/:id',
         resolve: {
-          outlet: OutletResolverService,
+          outletForm: OutletFormResolverService,
+          outletTypes: OutletTypesResolverService
         },
         loadChildren: '../form-details/form-details.module#FormDetailsPageModule'
       },

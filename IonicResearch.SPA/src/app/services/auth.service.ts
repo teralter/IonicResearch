@@ -21,11 +21,11 @@ export class AuthService {
 
   constructor(
     private storage: Storage,
-    private plt: Platform,
+    private platform: Platform,
     private http: HttpClient,
     private jwtHelper: JwtHelperService
   ) {
-    this.plt.ready().then(() => {
+    this.platform.ready().then(() => {
       this.checkToken();
       this.initUser();
     });
