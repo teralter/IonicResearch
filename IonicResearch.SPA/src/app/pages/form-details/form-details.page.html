@@ -12,10 +12,10 @@
     <ion-segment-button value="form">
       Анкета
     </ion-segment-button>
-    <ion-segment-button value="photos">
+    <ion-segment-button value="photos" [disabled]="!outletForm.id">
       Фото
     </ion-segment-button>
-    <ion-segment-button value="products">
+    <ion-segment-button value="products" [disabled]="!outletForm.id">
       Продукция
     </ion-segment-button>
   </ion-segment>
@@ -60,23 +60,16 @@
           </ion-input>
         </ion-item>
       </ion-list>
-      <!-- <ion-button expand="block" type="submit">Войти</ion-button> -->
     </form>
 
     <ion-list *ngSwitchCase="'photos'">
-      <ion-item *ngFor="let photo of photos; index as pos" text-wrap>
+      <ion-item *ngFor="let photo of outletForm.photos;" text-wrap>
         <ion-thumbnail slot="start">
           <ion-img [src]="photo.path"></ion-img>
         </ion-thumbnail>
         <ion-label>
           {{ photo.name }}
         </ion-label>
-        <!-- <ion-button slot="end" fill="clear" (click)="startUpload(img)">
-              <ion-icon slot="icon-only" name="cloud-upload"></ion-icon>
-            </ion-button>
-            <ion-button slot="end" fill="clear" (click)="deleteImage(img, pos)">
-              <ion-icon slot="icon-only" name="trash"></ion-icon>
-            </ion-button> -->
       </ion-item>
     </ion-list>
     <ion-list *ngSwitchCase="'products'">

@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { Route, ActivatedRoute } from '@angular/router';
+import { Route, ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import * as _ from 'lodash';
@@ -36,6 +36,7 @@ export class FormDetailsPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private formBuilder: FormBuilder,
     private geolocation: Geolocation,
     private camera: Camera,
@@ -77,6 +78,11 @@ export class FormDetailsPage implements OnInit {
       const hours = Math.floor(this.outletForm.openingTime / 60);
       const minutes = this.outletForm.openingTime % 60;
       openingTime = `${hours >= 10 ? hours : '0' + hours}:${minutes}`;
+
+      if (this.outletForm.latitude && this.outletForm.longitude) {
+        coords = [this.outletForm.latitude, this.outletForm.longitude];
+        this.setCoords(this.outletForm.latitude, this.outletForm.longitude);
+      }
     }
 
     this.form = this.formBuilder.group({
@@ -96,10 +102,54 @@ export class FormDetailsPage implements OnInit {
   onGetCoords() {
     this.geolocation.getCurrentPosition().then((pos) => {
       this.form.patchValue({ coords: [pos.coords.latitude, pos.coords.longitude] });
-      this.coords = `${pos.coords.latitude.toFixed(6)};${pos.coords.longitude.toFixed(6)}`;
+      this.setCoords(pos.coords.latitude, pos.coords.longitude);
     }).catch((error) => {
       // todo alert
     });
+  }
+
+  setCoords(latitude, longitude) {
+    this.coords = `${latitude.toFixed(6)};${longitude.toFixed(6)}`;
+  }
+
+  async onSubmitForm() {
+    Object.keys(this.form.controls).forEach(c => {
+      const control = this.form.controls[c];
+      if (!control.valid) {
+        control.setValue('');
+        control.markAsTouched();
+      }
+    });
+
+    if (this.form.valid) {
+      const isNew = this.outletForm.id == null;
+      const value = this.form.value;
+      this.outletForm.repDate = new Date(value.repDate);
+      this.outletForm.name = value.name;
+      this.outletForm.inn = value.inn;
+      this.outletForm.address = value.address;
+      this.outletForm.type = value.type;
+
+      const text = value.openingTime;
+      const tmp = String(text).match(/^(\d+):(\d+)$/);
+      const hours = parseInt(tmp[1], 10);
+      const minutes = parseInt(tmp[2], 10);
+
+      this.outletForm.openingTime = 60 * hours + minutes;
+      if (value.coords) {
+        this.outletForm.latitude = value.coords[0];
+        this.outletForm.longitude = value.coords[1];
+      }
+
+      const outletFormRepository = getRepository('OutletForm') as Repository<OutletForm>;
+      await outletFormRepository.save(this.outletForm);
+
+      if (isNew) {
+        this.title = 'Редактирование анкеты';
+      }
+
+      this.presentToast('ТТ сохранена');
+    }
   }
 
 
@@ -133,22 +183,22 @@ export class FormDetailsPage implements OnInit {
     return newFileName;
   }
 
-  updateStoredImages(name) {
-    // this.databaseprovider.addPhoto(new OutletPhoto(1, name)).then(photo => {
-    //   const filePath = this.file.dataDirectory + name;
-    //   const resPath = this.pathForImage(filePath);
+  async updateStoredImages(name) {
+    const filePath = this.file.dataDirectory + name;
+    const path = this.pathForImage(filePath);
 
-    //   const newEntry = {
-    //     id: 0,
-    //     formId: 1,
-    //     name: name,
-    //     path: resPath,
-    //     filePath: filePath
-    //   };
+    const photo = new OutletPhoto();
+    photo.name = name;
+    photo.path = path;
+    photo.filePath = filePath;
+    photo.form = this.outletForm;
 
-    //   this.photos = [newEntry, ...this.photos];
-    //   this.ref.detectChanges(); // trigger change detection cycle
-    // });
+    this.outletForm.photos.push(photo);
+
+    const outletPhotoRepository = getRepository('OutletPhoto') as Repository<OutletPhoto>;
+    await outletPhotoRepository.save(photo);
+
+    // this.ref.detectChanges();
   }
 
   pathForImage(img) {
@@ -160,47 +210,10 @@ export class FormDetailsPage implements OnInit {
     }
   }
 
-
-  async onSubmitForm() {
-    Object.keys(this.form.controls).forEach(c => {
-      const control = this.form.controls[c];
-      if (!control.valid) {
-        control.setValue('');
-        control.markAsTouched();
-      }
-    });
-
-    if (this.form.valid) {
-      const value = this.form.value;
-      this.outletForm.repDate = new Date(value.repDate);
-      this.outletForm.name = value.name;
-      this.outletForm.inn = value.inn;
-      this.outletForm.address = value.address;
-      this.outletForm.type = value.type;
-
-      const text = value.openingTime;
-      const tmp = String(text).match(/^(\d+):(\d+)$/);
-      const hours = parseInt(tmp[1], 10);
-      const minutes = parseInt(tmp[2], 10);
-
-      this.outletForm.openingTime = 60 * hours + minutes;
-      if (value.coords) {
-        this.outletForm.latitude = value.coords[0];
-        this.outletForm.longitude = value.coords[1];
-      }
-      // this.outletForm.photos = [];
-      // this.outletForm.products = [];
-
-      const outletRepository = getRepository('OutletForm') as Repository<OutletForm>;
-      await outletRepository.save(this.outletForm);
-    }
-  }
-
-
   async presentToast(text) {
     const toast = await this.toastCtrl.create({
       message: text,
-      position: 'bottom',
+      position: 'top',
       duration: 3000
     });
     toast.present();

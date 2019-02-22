@@ -10,19 +10,35 @@ import { getRepository, Repository } from 'typeorm';
 })
 export class FormsPage implements OnInit {
   forms: OutletForm[];
+  isActual = false;
 
   constructor(
     private dbService: DbService
   ) {
     this.dbService.databaseReady.subscribe(async state => {
-      if (state) {
-        const formRepository = getRepository('OutletForm') as Repository<OutletForm>;
-        this.forms = await formRepository.find();
+      if (state && !this.isActual) {
+        await this.loadForms();
       }
     });
   }
 
   ngOnInit() {
+  }
+
+  ionViewWillEnter() {
+    if (!this.isActual) {
+      this.loadForms();
+    }
+  }
+
+  ionViewDidLeave() {
+    this.isActual = false;
+  }
+
+  async loadForms() {
+    const formRepository = getRepository('OutletForm') as Repository<OutletForm>;
+    this.forms = await formRepository.find();
+    this.isActual = true;
   }
 
 }
