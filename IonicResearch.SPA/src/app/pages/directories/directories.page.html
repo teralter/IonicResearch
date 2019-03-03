@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Справочники</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-button (click)="import()">Import</ion-button>
+
+  <ion-list>
+    <ion-item>
+      <ion-label>
+        Московская область
+        <ion-progress-bar color="primary" [value]="progress"></ion-progress-bar>
+        <p>{{step}} {{progress * 100 | number:'1.0-0'}}%</p>
+      </ion-label>
+    </ion-item>
+    <!-- <ion-item>
+      <h5>Фиас</h5>
+      <br/>
+      <ion-progress-bar color="primary" value="0.5"></ion-progress-bar>
+    </ion-item> -->
+  </ion-list>
+</ion-content>

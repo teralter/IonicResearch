@@ -18,6 +18,10 @@ export class MenuPage implements OnInit {
     {
       title: 'Настройки',
       url: '/menu/settings'
+    },
+    {
+      title: 'Справочники',
+      url: '/menu/directories'
     }
   ];
 

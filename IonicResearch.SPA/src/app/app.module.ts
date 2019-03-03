@@ -9,11 +9,14 @@ import { Storage, IonicStorageModule } from '@ionic/storage';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { SQLite } from '@ionic-native/sqlite/ngx';
+import { SQLitePorter } from '@ionic-native/sqlite-porter/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Camera } from '@ionic-native/Camera/ngx';
 import { File } from '@ionic-native/File/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
+import { FileTransfer } from '@ionic-native/file-transfer/ngx';
+import { Zip } from '@ionic-native/zip/ngx';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -55,7 +58,11 @@ export function jwtOptionsFactory(storage) {
     Camera,
     File,
     WebView,
-    FilePath
+    FilePath,
+    SQLitePorter,
+    SQLite,
+    FileTransfer,
+    Zip
   ],
   bootstrap: [AppComponent]
 })

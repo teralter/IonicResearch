@@ -19,6 +19,10 @@ const routes: Routes = [
       {
         path: 'settings',
         loadChildren: '../settings/settings.module#SettingsPageModule'
+      },
+      {
+        path: 'directories',
+        loadChildren: '../directories/directories.module#DirectoriesPageModule'
       }
     ]
   }
@@ -33,4 +37,4 @@ const routes: Routes = [
   ],
   declarations: [MenuPage]
 })
-export class MenuPageModule {}
+export class MenuPageModule { }

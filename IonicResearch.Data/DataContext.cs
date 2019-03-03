@@ -14,6 +14,9 @@ namespace IonicResearch.Data
         public DbSet<OutletProduct> OutletProducts { get; set; }
         public DbSet<OutletFormProduct> OutletFormProducts { get; set; }
 
+        public DbSet<FiasAddressObject> FiasAddressObjects { get; set; }
+        public DbSet<FiasHouse> FiasHouses { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()
@@ -22,6 +25,11 @@ namespace IonicResearch.Data
             modelBuilder.Entity<OutletFormProduct>()
                 .HasKey(x => new { x.FormId, x.ProductId });
 
+            modelBuilder.Entity<FiasAddressObject>()
+                .HasIndex(x => x.AoGuid).IsUnique();
+
+            modelBuilder.Entity<FiasHouse>()
+                .HasIndex(x => x.HouseGuid).IsUnique();
         }
     }
 }

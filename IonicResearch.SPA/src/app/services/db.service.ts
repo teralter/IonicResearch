@@ -7,6 +7,8 @@ import { OutletProduct } from '../entities/outlet-product';
 import { BehaviorSubject } from 'rxjs';
 import { Platform } from '@ionic/angular';
 import { async } from '@angular/core/testing';
+import { FiasAddressObject } from '../entities/fias-address-object';
+import { FiasHouse } from '../entities/fias-house';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +31,9 @@ export class DbService {
         OutletForm,
         OutletType,
         OutletPhoto,
-        OutletProduct
+        OutletProduct,
+        FiasAddressObject,
+        FiasHouse
       ]
     });
     const typeRepository = getRepository('OutletType') as Repository<OutletType>;
