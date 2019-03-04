@@ -15,7 +15,7 @@ namespace IonicResearch.API.Controllers
     [ApiController]
     public class FiasController : ControllerBase
     {
-        private const int RowLimit = 100000;
+        private const int RowLimit = 40000;
         private readonly IFiasRepository _repo;
         private readonly IMapper _mapper;
 
@@ -25,28 +25,31 @@ namespace IonicResearch.API.Controllers
             this._mapper = mapper;
         }
 
-        [HttpGet("address-objects/{rootId}")]
-        public async Task<IActionResult> GetAddressObjects(int rootId)
+        [HttpGet("address-objects")]
+        public async Task<IActionResult> GetAddressObjects(int rootId, int regionId)
         {
             var addressObjects = await _repo.GetAddressObjects(rootId);
-            var result = _mapper.Map<IEnumerable<FiasAddressObjectDto>>(addressObjects);
-            var json = JsonConvert.SerializeObject(
-                new { Data = new { Inserts = new { FiasAddressObjects = result } } },
-                new JsonSerializerSettings
-                {
-                    ContractResolver = new DefaultContractResolver
+            var result = _mapper.Map<List<FiasAddressObjectDto>>(addressObjects);
+            for (int i = 0; i <= result.Count / RowLimit; i++)
+            {
+                var json = JsonConvert.SerializeObject(
+                    new { Data = new { Inserts = new { FiasAddressObjects = result.Skip(i * RowLimit).Take(RowLimit) } } },
+                    new JsonSerializerSettings
                     {
-                        NamingStrategy = new CamelCaseNamingStrategy()
-                    }
-                });
+                        ContractResolver = new DefaultContractResolver
+                        {
+                            NamingStrategy = new CamelCaseNamingStrategy()
+                        }
+                    });
+                System.IO.File.WriteAllText($@"F:\addressObjects{regionId}_p{i}.json", json);
+            }
 
-            System.IO.File.WriteAllText($@"F:\addressObjects.json", json);
 
             return Ok();
         }
 
-        [HttpGet("houses/{rootId}")]
-        public async Task<IActionResult> GetHouses(int rootId)
+        [HttpGet("houses")]
+        public async Task<IActionResult> GetHouses(int rootId, int regionId)
         {
             var houses = await _repo.GetHouses(rootId);
             var result = _mapper.Map<List<FiasHouseDto>>(houses);
@@ -63,7 +66,7 @@ namespace IonicResearch.API.Controllers
                        }
                    });
 
-                System.IO.File.WriteAllText($@"F:\houses50_p{i}.json", json);
+                System.IO.File.WriteAllText($@"F:\houses{regionId}_p{i}.json", json);
             }
 
 

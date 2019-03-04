@@ -7,8 +7,8 @@ import { SQLitePorter } from '@ionic-native/sqlite-porter/ngx';
 import { File } from '@ionic-native/File/ngx';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { Zip } from '@ionic-native/zip/ngx';
-import { map, catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
+import { ProgressState } from '../models/progress-state';
 
 @Injectable({
   providedIn: 'root'
@@ -16,12 +16,12 @@ import { throwError } from 'rxjs';
 export class DirectoriesService {
   baseUrl = environment.apiUrl + 'directories/';
   database: SQLiteObject;
+  progressState = new BehaviorSubject<ProgressState>(null);
 
   constructor(
     private platform: Platform,
     private http: HttpClient,
     private sqlite: SQLite,
-    private sqlitePorter: SQLitePorter,
     private file: File,
     private transfer: FileTransfer,
     private zip: Zip,
@@ -37,21 +37,22 @@ export class DirectoriesService {
     });
   }
 
-  async import(dictName: string, onProgressChanged: (step: string, progress: number) => void) {
+  async import(route: string, dictName?: string) {
     try {
       const tempDir = (new Date()).getTime().toString();
       const fileTransfer: FileTransferObject = this.transfer.create();
       fileTransfer.onProgress((progressEvent) => {
-        onProgressChanged('Загрузка', progressEvent.loaded / progressEvent.total);
+        this.progressState.next(new ProgressState('Загрузка' + (dictName == null ? '' : ` (${dictName})`), progressEvent.loaded / progressEvent.total));
       });
-      const entry = await fileTransfer.download(this.baseUrl + dictName, this.file.cacheDirectory + tempDir + '/data.zip');
+      const entry = await fileTransfer.download(this.baseUrl + route, this.file.cacheDirectory + tempDir + '/data.zip');
       const result = await this.zip.unzip(entry.toURL(), this.file.cacheDirectory + '/' + tempDir, (progress) => {
-        onProgressChanged('Распаковка', progress.loaded / progress.total);
+        this.progressState.next(new ProgressState('Распаковка' + (dictName == null ? '' : ` (${dictName})`), progress.loaded / progress.total));
       });
       if (result === 0) {
-        const files = await this.file.listDir(this.file.cacheDirectory, tempDir);
-        for (const file of files.filter(x => x.name.endsWith('.json'))) {
-          await this.processFile(file, tempDir, onProgressChanged);
+        let files = await this.file.listDir(this.file.cacheDirectory, tempDir);
+        files = files.filter(x => x.name.endsWith('.json'));
+        for (let i = 0; i < files.length; i++) {
+          await this.processFile(files[i], tempDir, i, files.length, dictName);
         }
         await this.file.removeRecursively(this.file.cacheDirectory, tempDir);
       }
@@ -60,7 +61,7 @@ export class DirectoriesService {
     }
   }
 
-  async processFile(file, tempDir, onProgressChanged: (step: string, progress: number) => void) {
+  async processFile(file, tempDir, index, length, dictName?: string) {
     return new Promise((resolve, reject) => {
       this.file.readAsText(this.file.cacheDirectory + '/' + tempDir, file.name).then(json => {
         (<any>window).cordova.plugins.sqlitePorter.importJsonToDb(this.database, json, {
@@ -71,8 +72,7 @@ export class DirectoriesService {
             reject(error);
           },
           progressFn: (current, total) => {
-            onProgressChanged('Импорт', current / total);
-            console.log('Imported ' + current + '/' + total + ' statements');
+            this.progressState.next(new ProgressState('Импорт' + (dictName == null ? '' : ` (${dictName})`), (index + current / total) / length));
           },
           batchInsertSize: 500
         });

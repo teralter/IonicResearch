@@ -13,29 +13,29 @@ namespace IonicResearch.API.Controllers
         {
         }
 
-        [HttpGet("address-objects/{regionId}")]
-        public async Task<IActionResult> DownloadAddressObjects(int regionId)
+        [HttpGet("{dictName}/{regionId}")]
+        public async Task<IActionResult> DownloadFias(string dictName, int regionId)
         {
             var memory = new MemoryStream();
-            using (var stream = new FileStream($@"F:\addressObjects{regionId}.json", FileMode.Open))
+            using (var stream = new FileStream($@"F:\{dictName}{regionId}.zip", FileMode.Open))
             {
                 await stream.CopyToAsync(memory);
             }
             memory.Position = 0;
-            return File(memory, "application/json", $@"addressObjects{regionId}.json");
+            return File(memory, "application/zip", $@"{dictName}{regionId}.zip");
         }
 
 
-        [HttpGet("houses/{regionId}")]
-        public async Task<IActionResult> DownloadHouses(int regionId)
-        {
-            var memory = new MemoryStream();
-            using (var stream = new FileStream($@"F:\houses{regionId}.zip", FileMode.Open))
-            {
-                await stream.CopyToAsync(memory);
-            }
-            memory.Position = 0;
-            return File(memory, "application/zip", $@"houses{regionId}.zip");
-        }
+        // [HttpGet("houses/{regionId}")]
+        // public async Task<IActionResult> DownloadHouses(int regionId)
+        // {
+        //     var memory = new MemoryStream();
+        //     using (var stream = new FileStream($@"F:\houses{regionId}.zip", FileMode.Open))
+        //     {
+        //         await stream.CopyToAsync(memory);
+        //     }
+        //     memory.Position = 0;
+        //     return File(memory, "application/zip", $@"houses{regionId}.zip");
+        // }
     }
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { DirectoriesService } from 'src/app/services/directories.service';
+import { auditTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-directories',
@@ -9,20 +10,29 @@ import { DirectoriesService } from 'src/app/services/directories.service';
 export class DirectoriesPage implements OnInit {
   step: string;
   progress: number;
+  lastLoad: Date;
 
   constructor(
     private dirService: DirectoriesService,
     private ref: ChangeDetectorRef,
-  ) { }
+  ) {
+
+    this.dirService.progressState.subscribe(state => {
+      if (state) {
+        this.step = state.step;
+        this.progress = state.percent;
+        ref.detectChanges();
+      }
+    });
+  }
 
   ngOnInit() {
   }
 
-  import() {
-    this.dirService.import('houses/77', (step: string, progress: number) => {
-      this.step = step;
-      this.progress = progress;
-      this.ref.detectChanges();
-    });
+  async import() {
+    await this.dirService.import('addressObjects/77', 'элементы адреса');
+    await this.dirService.import('houses/77', 'дома');
+    this.step = null;
+    this.lastLoad = new Date();
   }
 }
