@@ -8,16 +8,20 @@
 </ion-header>
 
 <ion-content padding>
-  <ion-button (click)="import()">Import</ion-button>
-
-  <ion-list>
-    <ion-item>
+  <ion-item-group *ngFor="let dg of directoryGroups">
+    <ion-item-divider>
+      <h5>{{dg.name}}</h5>
+    </ion-item-divider>
+    <ion-item *ngFor="let d of dg.directories">
       <ion-label>
-        Московская область
-        <ion-progress-bar color="primary" [value]="progress"></ion-progress-bar>
-        <p *ngIf="!step">{{lastLoad ? 'Последняя загрузка: ' + (lastLoad | date:'dd.MM.yyyy HH:mm:ss') : 'Не загружался'}}</p>
-        <p *ngIf="step">{{step}} {{progress * 100 | number:'1.0-0'}}%</p>
+        {{d.name}}
+        <ion-progress-bar *ngIf="currentDirectory === d" color="primary" [value]="d.progress"></ion-progress-bar>
+        <p *ngIf="!d.step">
+          {{d.lastLoad ? 'Последняя загрузка: ' + (d.lastLoad | date:'dd.MM.yyyy HH:mm:ss') : 'Не загружался'}}</p>
+        <p *ngIf="d.step">{{d.step}} {{d.progress * 100 | number:'1.0-0'}}%</p>
       </ion-label>
+      <ion-checkbox slot="end" [(ngModel)]="d.isChecked"></ion-checkbox>
     </ion-item>
-  </ion-list>
+  </ion-item-group>
+  <ion-button expand="block" (click)="import()" margin-top>Загрузить</ion-button>
 </ion-content>

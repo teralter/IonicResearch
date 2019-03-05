@@ -37,22 +37,22 @@ export class DirectoriesService {
     });
   }
 
-  async import(route: string, dictName?: string) {
+  async importFiasDirectory(route: string, dirName?: string) {
     try {
       const tempDir = (new Date()).getTime().toString();
       const fileTransfer: FileTransferObject = this.transfer.create();
       fileTransfer.onProgress((progressEvent) => {
-        this.progressState.next(new ProgressState('Загрузка' + (dictName == null ? '' : ` (${dictName})`), progressEvent.loaded / progressEvent.total));
+        this.progressState.next(new ProgressState('Загрузка' + (dirName == null ? '' : ` (${dirName})`), progressEvent.loaded / progressEvent.total));
       });
       const entry = await fileTransfer.download(this.baseUrl + route, this.file.cacheDirectory + tempDir + '/data.zip');
       const result = await this.zip.unzip(entry.toURL(), this.file.cacheDirectory + '/' + tempDir, (progress) => {
-        this.progressState.next(new ProgressState('Распаковка' + (dictName == null ? '' : ` (${dictName})`), progress.loaded / progress.total));
+        this.progressState.next(new ProgressState('Распаковка' + (dirName == null ? '' : ` (${dirName})`), progress.loaded / progress.total));
       });
       if (result === 0) {
         let files = await this.file.listDir(this.file.cacheDirectory, tempDir);
         files = files.filter(x => x.name.endsWith('.json'));
         for (let i = 0; i < files.length; i++) {
-          await this.processFile(files[i], tempDir, i, files.length, dictName);
+          await this.processFile(files[i], tempDir, i, files.length, dirName);
         }
         await this.file.removeRecursively(this.file.cacheDirectory, tempDir);
       }
@@ -61,7 +61,7 @@ export class DirectoriesService {
     }
   }
 
-  async processFile(file, tempDir, index, length, dictName?: string) {
+  async processFile(file, tempDir, index, length, dirName?: string) {
     return new Promise((resolve, reject) => {
       this.file.readAsText(this.file.cacheDirectory + '/' + tempDir, file.name).then(json => {
         (<any>window).cordova.plugins.sqlitePorter.importJsonToDb(this.database, json, {
@@ -72,7 +72,7 @@ export class DirectoriesService {
             reject(error);
           },
           progressFn: (current, total) => {
-            this.progressState.next(new ProgressState('Импорт' + (dictName == null ? '' : ` (${dictName})`), (index + current / total) / length));
+            this.progressState.next(new ProgressState('Импорт' + (dirName == null ? '' : ` (${dirName})`), (index + current / total) / length));
           },
           batchInsertSize: 500
         });
