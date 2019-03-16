@@ -1,10 +1,11 @@
-import { Entity, PrimaryColumn, Column } from 'typeorm';
+import { Entity, PrimaryColumn, Column, Index } from 'typeorm';
 @Entity('FiasHouses')
 export class FiasHouse {
   @PrimaryColumn()
   id: number;
 
-  @PrimaryColumn()
+  @Index()
+  @Column()
   aoId: number;
 
   @Column({ length: 20, nullable: true })

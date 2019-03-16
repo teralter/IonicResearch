@@ -9,6 +9,7 @@ using IonicResearch.API.Helpers;
 using IonicResearch.Data;
 using IonicResearch.Data.Repositories.Auth;
 using IonicResearch.Data.Repositories.Fias;
+using IonicResearch.Data.Repositories.Outlet;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -59,6 +60,7 @@ namespace IonicResearch.API
 
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IFiasRepository, FiasRepository>();
+            services.AddScoped<IOutletRepository, OutletRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

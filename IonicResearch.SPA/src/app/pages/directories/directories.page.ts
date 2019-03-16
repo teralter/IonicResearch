@@ -1,8 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { DirectoriesService } from 'src/app/services/directories.service';
-import { auditTime } from 'rxjs/operators';
-import { Directory } from 'src/app/models/directory';
-import { KeyValuePair } from 'src/app/models/key-value-pair';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-directories',
@@ -12,6 +10,7 @@ import { KeyValuePair } from 'src/app/models/key-value-pair';
 export class DirectoriesPage implements OnInit {
   directoryGroups: any[];
   currentDirectory: any = null;
+  importing: boolean;
 
   constructor(
     private dirService: DirectoriesService,
@@ -39,7 +38,7 @@ export class DirectoriesPage implements OnInit {
           { key: 'houses/50', value: 'дома' }
         ],
         isFile: true,
-        isChecked: true,
+        isChecked: false,
         step: null,
         progress: null,
         lastLoad: null
@@ -50,7 +49,7 @@ export class DirectoriesPage implements OnInit {
           { key: 'houses/77', value: 'дома' }
         ],
         isFile: true,
-        isChecked: true,
+        isChecked: false,
         step: null,
         progress: null,
         lastLoad: null
@@ -60,12 +59,14 @@ export class DirectoriesPage implements OnInit {
           { key: 'houses/23', value: 'дома' }
         ],
         isFile: true,
-        isChecked: true,
+        isChecked: false,
         step: null,
         progress: null,
         lastLoad: null
       }]
     }];
+
+    this.setDirLoads();
   }
 
   ionViewDidEnter() {
@@ -78,25 +79,36 @@ export class DirectoriesPage implements OnInit {
     });
   }
 
+  async setDirLoads() {
+    const dirLoads = await this.dirService.getDirLoads();
+
+    for (const dg of this.directoryGroups) {
+      for (const d of dg.directories) {
+        const dirLoad = _.find(dirLoads, { route: _.last(d.routes).key });
+        if (dirLoad) {
+          d.lastLoad = new Date(dirLoad.load);
+          d.isChecked = true;
+        }
+      }
+    }
+  }
+
   async import() {
+    this.importing = true;
     for (const dg of this.directoryGroups) {
       for (const d of dg.directories) {
         if (d.isChecked) {
           this.currentDirectory = d;
           for (const r of d.routes) {
-            await this.dirService.importFiasDirectory(r.key, r.value);
+            await this.dirService.importDirectory(r.key, r.value, d.isFile);
           }
           d.step = null;
           d.progress = null;
-          d.lastLoad = new Date();
           this.currentDirectory = null;
         }
       }
     }
-
-    // await this.dirService.importFiasDirectory('addressObjects/50', 'элементы адреса');
-    // await this.dirService.importFiasDirectory('houses/50', 'дома');
-    // this.step = null;
-    // this.lastLoad = new Date();
+    this.setDirLoads();
+    this.importing = false;
   }
 }

@@ -23,5 +23,5 @@
       <ion-checkbox slot="end" [(ngModel)]="d.isChecked"></ion-checkbox>
     </ion-item>
   </ion-item-group>
-  <ion-button expand="block" (click)="import()" margin-top>Загрузить</ion-button>
+  <ion-button expand="block" (click)="import()" [disabled]="importing" margin-top>Загрузить</ion-button>
 </ion-content>

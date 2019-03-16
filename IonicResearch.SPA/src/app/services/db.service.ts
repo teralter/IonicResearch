@@ -36,27 +36,6 @@ export class DbService {
         FiasHouse
       ]
     });
-    const typeRepository = getRepository('OutletType') as Repository<OutletType>;
-    const typesCount = await typeRepository.count();
-    if (typesCount === 0) {
-      const types = [
-        { id: 1, name: 'Гипермаркет' },
-        { id: 2, name: 'Киоск' },
-        { id: 3, name: 'Хорека' },
-        { id: 4, name: 'Пивнушка' },
-        { id: 5, name: 'Рынок' }
-      ];
-
-      await Promise.all(types.map(async (t) => {
-        const type = new OutletType();
-        type.id = t.id;
-        type.name = t.name;
-        await typeRepository.save(type);
-      }));
-
-      this.databaseReady.next(true);
-    } else {
-      this.databaseReady.next(true);
-    }
+    this.databaseReady.next(true);
   }
 }

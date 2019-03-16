@@ -1,10 +1,11 @@
-import { Entity, PrimaryColumn, Column } from 'typeorm';
+import { Entity, PrimaryColumn, Column, Index } from 'typeorm';
 
 @Entity('FiasAddressObjects')
 export class FiasAddressObject {
   @PrimaryColumn()
   id: number;
 
+  @Index()
   @Column({ nullable: true })
   parentId?: number;
 
